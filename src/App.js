@@ -1,7 +1,7 @@
 import React from 'react';
-import SkifTable from './components/skif-table/SkitTable';
+import SkifTable from './component/SkifTable';
 
-import './App.css';
+import './App.scss';
 
 const SummaryComponent = ({ calc }) => (
   <tr className="summary-row">
