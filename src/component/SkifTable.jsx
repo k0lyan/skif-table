@@ -50,14 +50,10 @@ const FILTER_LIKE = 'like';
 
 class SkifTable extends React.Component {
 
-  pages = [50, 100, 500, 1000, 10000];
-
   constructor(props) {
     super(props);
 
-    if (props.pages && props.pages.length > 0) {
-      this.pages = props.pages;
-    }
+    this.pages = props.pages;
 
     this.state = {
       pageNumber: 1,
@@ -396,6 +392,7 @@ class SkifTable extends React.Component {
 }
 
 SkifTable.defaultProps = {
+  pages: [50, 100, 500, 1000, 10000],
   groupByField: null,
   captionComponent: null,
   rowComponent: null,
@@ -406,6 +403,7 @@ SkifTable.defaultProps = {
 SkifTable.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   rows: PropTypes.arrayOf(PropTypes.object).isRequired,
+  pages: PropTypes.arrayOf(PropTypes.number),
   groupByField: PropTypes.string,
   captionComponent: PropTypes.element,
   rowComponent: PropTypes.element,
