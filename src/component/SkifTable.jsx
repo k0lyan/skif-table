@@ -34,9 +34,7 @@ DefaultGroupComponent.propTypes = {
   name: PropTypes.string,
 };
 
-const pages = [50, 100, 500, 1000, 10000];
-
-const PageSize = ({ value, onChange }) => {
+const PageSize = ({ pages, value, onChange }) => {
   const selected = (value) || pages[0];
 
   return (
@@ -48,14 +46,27 @@ const PageSize = ({ value, onChange }) => {
   );
 };
 
+const FILTER_LIKE = 'like';
+
 class SkifTable extends React.Component {
-  state = {
-    pageNumber: 1,
-    filterValues: {},
-    sortAsc: true,
-    sortField: 'id',
-    pageSize: pages[0],
-  };
+
+  pages = [50, 100, 500, 1000, 10000];
+
+  constructor(props) {
+    super(props);
+
+    if (props.pages && props.pages.length > 0) {
+      this.pages = props.pages;
+    }
+
+    this.state = {
+      pageNumber: 1,
+      filterValues: {},
+      sortAsc: true,
+      sortField: 'id',
+      pageSize: this.pages[0],
+    };
+  }
 
   handleSort = (field) => {
     const { sortField, sortAsc } = this.state;
@@ -78,7 +89,7 @@ class SkifTable extends React.Component {
         ...filterValues,
         ...{ [field]: e.target.value },
       },
-      pageNumber: 1, // Обнуляем пагинацию
+      pageNumber: 1, // Reset page
     });
   };
 
@@ -87,7 +98,7 @@ class SkifTable extends React.Component {
 
     this.setState({
       pageSize: parseInt(size, 10),
-      pageNumber: 1, // Обнуляем пагинацию
+      pageNumber: 1, // Reset page
     });
   };
 
@@ -99,14 +110,22 @@ class SkifTable extends React.Component {
 
   getFilteredItems = () => {
     const { filterValues } = this.state;
-    const { rows, crud } = this.props;
-    const columnsLike = crud.columns.filter((item) => item.filter === 'like').map((item) => item.field);
+    const { rows, columns } = this.props;
+    const columnsLike = columns
+      .filter((item) => item.filter === FILTER_LIKE)
+      .map((item) => item.field);
+
     return rows.filter((item) => {
       let founded = true;
       Object.keys(item).forEach((key) => {
         if (columnsLike.includes(key)) {
           if (filterValues[key] !== undefined) {
-            if (!(item[key] !== null && filterValues[key] != null && item[key].toString().toLowerCase().indexOf(filterValues[key].toString().toLowerCase()) > -1)) {
+            if (!(item[key] !== null
+              && filterValues[key] != null
+              && item[key]
+                .toString()
+                .toLowerCase()
+                .indexOf(filterValues[key].toString().toLowerCase()) > -1)) {
               founded = false;
             }
           }
@@ -117,8 +136,7 @@ class SkifTable extends React.Component {
   };
 
   getCalc = (items) => {
-    const { groupByField } = this.props;
-    const { columns } = this.props.crud;
+    const { columns, groupByField } = this.props;
 
     const calcColumns = columns.filter((item) => item.calc)
       .map((item) => ({ name: item.field, calc: item.calc }));
@@ -198,12 +216,12 @@ class SkifTable extends React.Component {
   };
 
   showHead = () => {
-    const { crud } = this.props;
+    const { columns } = this.props;
     const { sortField, sortAsc } = this.state;
 
     return (
       <tr>
-        {crud.columns.map((item, index) => {
+        {columns.map((item, index) => {
           if (item.sort) {
             let thClasses = 'sorting';
 
@@ -224,12 +242,12 @@ class SkifTable extends React.Component {
   };
 
   showHeadFilters = () => {
-    const { crud } = this.props;
+    const { columns } = this.props;
 
     return (
       <tr>
-        {crud.columns.map((item, index) => {
-            if (item.filter !== undefined && item.filter === 'like') {
+        {columns.map((item, index) => {
+            if (item.filter !== undefined && item.filter === FILTER_LIKE) {
               return (
                 <th
                   key={`f_${index}`}
@@ -262,12 +280,11 @@ class SkifTable extends React.Component {
 
   showBody = (items, calc) => {
     const {
-      crud, rows, rowComponent, groupComponent, groupByField,
+      columns, rows, rowComponent, groupComponent, groupByField,
     } = this.props;
     const {
       sortAsc, sortField, pageNumber, pageSize,
     } = this.state;
-    const { columns } = crud;
 
     if (sortAsc) {
       sort(items).asc((u) => u[sortField]);
@@ -283,7 +300,7 @@ class SkifTable extends React.Component {
       const groupedItems = [];
       const idsGroups = [];
 
-      unique.forEach(function (value, index) {
+      unique.forEach((value, index) => {
         if (grouped[value]) {
           if (!idsGroups.includes(index)) {
             if (groupComponent) {
@@ -312,10 +329,10 @@ class SkifTable extends React.Component {
     }
 
     return this.paginateArray(items, pageSize, pageNumber).map((item, index) => {
-      // Если кастомный row
+      // if custom row
       if (rowComponent) {
         return React.cloneElement(rowComponent, { item, key: `row_${ index}` });
-        // Если никакой компонент не передали, рендерим стандартный
+        // if dont receive custom component, render default
       }
       return (
         <DefaultRowComponent key={`row${ index}`} columns={columns} item={item} />
@@ -353,10 +370,13 @@ class SkifTable extends React.Component {
             {!groupByField
             && (
               <div className="form-inline">
-                <PageSize
-                  onChange={this.handlePageSize}
-                  value={pageSize}
-                />
+                {pageSize && (
+                  <PageSize
+                    onChange={this.handlePageSize}
+                    value={pageSize}
+                    pages={this.pages}
+                  />
+                )}
                 <Pagination
                   innerClass="pagination crud-pagination"
                   itemClass="page-item"
@@ -375,9 +395,17 @@ class SkifTable extends React.Component {
   }
 }
 
+SkifTable.defaultProps = {
+  groupByField: null,
+  captionComponent: null,
+  rowComponent: null,
+  summaryComponent: null,
+  groupComponent: null,
+};
+
 SkifTable.propTypes = {
-  crud: PropTypes.any,
-  rows: PropTypes.array,
+  columns: PropTypes.arrayOf(PropTypes.object).isRequired,
+  rows: PropTypes.arrayOf(PropTypes.object).isRequired,
   groupByField: PropTypes.string,
   captionComponent: PropTypes.element,
   rowComponent: PropTypes.element,

@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js',
@@ -29,6 +30,10 @@ module.exports = {
         filename: 'bundle.js',
     },
     plugins: [
+        new HtmlWebpackPlugin({
+            template: './public/index.html',
+        }),
+        new ExtractTextPlugin('style.css'),
         new webpack.HotModuleReplacementPlugin(),
     ],
     devServer: {

@@ -12,31 +12,23 @@
     "fast-sort": "^1.0.0"
   },
   "dependencies": {
+    "bootstrap": "^4.3.1",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "fast-sort": "^1.6.0",
+    "node-sass": "^4.12.0",
+    "numeral": "^2.0.6",
     "react": "^16.10.2",
+    "react-bootstrap": "^1.0.0-beta.14",
     "react-dom": "^16.10.2",
     "react-js-pagination": "^3.0.2",
-    "extract-text-webpack-plugin": "^4.0.0-beta.0",
-    "node-sass": "^4.12.0"
+    "react-number-format": "^4.3.0"
   },
   "scripts": {
     "build": "webpack --config webpack_build_packet.config.js",
-    "start:dev": "webpack-dev-server"
+    "start": "webpack-dev-server"
   },
   "eslintConfig": {
     "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   },
   "devDependencies": {
     "babel-core": "^6.21.0",
@@ -45,6 +37,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.24.1",
+    "copy-webpack-plugin": "^5.0.4",
     "css-loader": "^3.2.0",
     "eslint": "^6.5.1",
     "eslint-config-airbnb": "^18.0.1",
@@ -53,7 +46,10 @@
     "eslint-plugin-react": "^7.15.1",
     "eslint-plugin-react-hooks": "^2.1.1",
     "fast-sort": "^1.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.8.0",
     "path": "^0.12.7",
+    "postcss-loader": "^3.0.0",
     "prop-types": "^15.6.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
