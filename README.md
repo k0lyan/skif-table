@@ -12,38 +12,43 @@
 ### Создание билда для публикации в NPM
 `npm run build` 
 
-###Simple example
+### Простой пример
 
 ```
 state = {
-    crud: {
-      columns: [
-        {
-          field: 'name',
-          label: 'Имя',
-          sort: true,
-          filter: 'like',
-        },
-        {
-          field: 'name',
-          label: 'Имя',
-          sort: true,
-          filter: 'like',
-        },
-        {
-          field: '',
-          label: 'Действие',
-        },
-      ],
-      pageSize: 40,
+  columns: [
+    {
+      field: 'name',
+      label: 'Имя',
+      sort: true,
+      filter: 'like',
     },
-    rows: [
-      { id: 1, name: 'becka', kind: 'human' },
-      { id: 2, name: 'tonya', kind: 'human' },
-      { id: 3, name: 'morty', kind: 'dog' },
-      { id: 4, name: 'sia', kind: 'cat' },
-    ],
-  };
+    {
+      field: 'name',
+      label: 'Имя',
+      sort: true,
+      filter: 'like',
+    },
+    {
+      field: 'price', // Имя поля
+      label: 'Стоимость', // Имя которое выводим
+      sort: true, // Разрешить сортировку
+      filter: 'like', // Разрешить фильтр по типу like
+      calc: 'avg', // avg - посчитать среднее значение, sum - посчитать сумму
+    },
+    {
+      field: '',
+      label: 'Действие',
+    },
+  ],
+  pageSize: [10, 20, 30], // Выборки для pagination, первое значение по умолчанию
+  rows: [
+    { id: 1, name: 'becka', kind: 'human' },
+    { id: 2, name: 'tonya', kind: 'human' },
+    { id: 3, name: 'morty', kind: 'dog' },
+    { id: 4, name: 'sia', kind: 'cat' },
+  ],
+};
 ```
 
 ### Props
