@@ -171,6 +171,7 @@ class App extends React.Component {
           field: 'gender',
           label: 'Пол',
           sort: true,
+          filter: 'dropdown',
         },
         {
           field: 'phone',

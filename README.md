@@ -2,7 +2,6 @@
 
 ## Простая реализация фильтруемой таблицы
 
-
 ### Установка модуля из NPM
 `npm install skif-table`
 
@@ -12,11 +11,23 @@
 ### Создание билда для публикации в NPM
 `npm run build` 
 
+### Публикация в NPM
+`npm publish` 
+
 ### Простой пример
 
 ```
 state = {
-  columns: [
+  rows: [
+    { id: 1, name: 'becka', kind: 'human' },
+    { id: 2, name: 'tonya', kind: 'human' },
+    { id: 3, name: 'morty', kind: 'dog' },
+    { id: 4, name: 'sia', kind: 'cat' },
+  ],
+};
+
+<SkifTable
+  columns={[
     {
       field: 'name',
       label: 'Имя',
@@ -40,15 +51,11 @@ state = {
       field: '',
       label: 'Действие',
     },
-  ],
-  pageSize: [10, 20, 30], // Выборки для pagination, первое значение по умолчанию
-  rows: [
-    { id: 1, name: 'becka', kind: 'human' },
-    { id: 2, name: 'tonya', kind: 'human' },
-    { id: 3, name: 'morty', kind: 'dog' },
-    { id: 4, name: 'sia', kind: 'cat' },
-  ],
-};
+  ]}
+  rows={this.state.rows}
+  groupByField="kind" // Группируем по полю
+  pageSize={[10, 20, 30]} // Выборки для pagination, первое значение по умолчанию
+/>
 ```
 
 ### Props
@@ -58,7 +65,7 @@ state = {
 | columns | array of objects (ex. [{id: 1, name: 'john'}]) |
 | rows | array of column object |
 | groupByField | string to group by column (without pagination) |
-| captionComponent | [plugins/onedrive/README.md][PlOd] |
+| captionComponent | custom caption |
 | rowComponent | custom row component |
 | summaryComponent | custom summary component |
 | groupComponent | custom group component |

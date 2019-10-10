@@ -6,12 +6,12 @@ import Pagination from 'react-js-pagination';
 class DefaultRowComponent extends React.PureComponent {
   render() {
   const { columns, item } = this.props;
-  return (
-    <tr>
-      {
-        columns.map((e, index) => <td key={`i_${index}`}>{item[e.field]}</td>)
-      }
-    </tr>
+    return (
+      <tr>
+        {
+          columns.map((e, index) => <td key={`i_${index}`}>{item[e.field]}</td>)
+        }
+      </tr>
     );
   }
 }
@@ -47,6 +47,7 @@ const PageSize = ({ pages, value, onChange }) => {
 };
 
 const FILTER_LIKE = 'like';
+const FILTER_DROPDOWN = 'dropdown';
 
 class SkifTable extends React.Component {
 
@@ -111,7 +112,13 @@ class SkifTable extends React.Component {
       .filter((item) => item.filter === FILTER_LIKE)
       .map((item) => item.field);
 
-    return rows.filter((item) => {
+    const columnsExact = columns
+      .filter((item) => item.filter === FILTER_DROPDOWN)
+      .map((item) => item.field);
+
+    const dropDownValues = {};
+
+    const items = rows.filter((item) => {
       let founded = true;
       Object.keys(item).forEach((key) => {
         if (columnsLike.includes(key)) {
@@ -126,9 +133,28 @@ class SkifTable extends React.Component {
             }
           }
         }
+
+        if (columnsExact.includes(key)) {
+          if (filterValues[key] !== undefined) {
+            if (!(item[key] !== null
+              && filterValues[key] != null
+              && filterValues[key] != null
+              && (item[key] === filterValues[key] || filterValues[key] === '')
+            )) {
+              founded = false;
+            }
+          }
+
+          if (!dropDownValues.hasOwnProperty(key)) {
+            dropDownValues[key] = new Set();
+          }
+          dropDownValues[key].add(item[key]);
+        }
       });
       return founded;
     });
+
+    return { items, dropDownValues };
   };
 
   getCalc = (items) => {
@@ -237,7 +263,7 @@ class SkifTable extends React.Component {
     );
   };
 
-  showHeadFilters = () => {
+  showHeadFilters = (dropDownValues) => {
     const { columns } = this.props;
 
     return (
@@ -249,6 +275,19 @@ class SkifTable extends React.Component {
                   key={`f_${index}`}
                 >
                   <input onChange={(e) => this.handleFilter(e, item.field)} type="text" className="form-control" placeholder={item.label} />
+                </th>
+              );
+            } if (item.filter !== undefined && item.filter === FILTER_DROPDOWN) {
+              return (
+                <th
+                  key={`f_${index}`}
+                >
+                  <select onChange={(e) => this.handleFilter(e, item.field)} className="form-control">
+                    <option value=""></option>
+                    {dropDownValues && [...dropDownValues[item.field]].map((item) => (
+                      <option key={item}>{item}</option>
+                    ))}
+                  </select>
                 </th>
               );
             }
@@ -339,7 +378,7 @@ class SkifTable extends React.Component {
   render() {
     const { summaryComponent, groupByField } = this.props;
     const { pageNumber, pageSize } = this.state;
-    const items = this.getFilteredItems();
+    const { items, dropDownValues } = this.getFilteredItems();
 
     const calcInfo = this.getCalc(items);
 
@@ -355,7 +394,7 @@ class SkifTable extends React.Component {
           <thead>
             {this.showHead()}
             {summaryComponent && React.cloneElement(summaryComponent, { calc: calcInfo.all })}
-            {this.showHeadFilters()}
+            {this.showHeadFilters(dropDownValues)}
           </thead>
           <tbody>
             {this.showBody(items, calcInfo)}

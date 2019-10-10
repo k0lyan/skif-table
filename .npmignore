@@ -6,5 +6,6 @@
 src
 demo
 .babelrc
-webpack.config.js
+webpack*.config.js
 .eslintrc.json
+/public
