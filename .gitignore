@@ -25,3 +25,5 @@ yarn-error.log*
 /lib
 
 .idea
+/.vscode
+/v8-compile-cache*

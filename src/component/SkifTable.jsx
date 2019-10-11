@@ -9,7 +9,15 @@ class DefaultRowComponent extends React.PureComponent {
     return (
       <tr>
         {
-          columns.map((e, index) => <td key={`i_${index}`}>{item[e.field]}</td>)
+          columns.map((e, index) => {
+            if (e.valueComponent) {
+              return <td key={`i_${index}`}>{React.cloneElement(e.valueComponent, { columns, item })}</td>;
+            } else {
+              return (
+                <td key={`i_${index}`}>{item[e.field]}</td>
+              );
+            }
+          })
         }
       </tr>
     );
@@ -343,7 +351,7 @@ class SkifTable extends React.Component {
                 name: value, key: `g_row_${ count}`, values: grouped[value], calc: calc.group[value],
               }));
             } else {
-              groupedItems.push(<DefaultGroupComponent key={`row${count}`} name={value} />);
+              groupedItems.push(<DefaultGroupComponent key={`row${count}`} columns={columns} name={value} />);
             }
             count += 1;
           }
