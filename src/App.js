@@ -60,6 +60,14 @@ const RowComponent = ({ item }) => (
   </tr>
 );
 
+const PhoneField = ({ item, onClick }) => (
+  <span>
+    <button type="button" className="btn btn-sm btn-info" onClick={() => onClick(item.phone)}>
+      {item.phone}
+    </button>
+  </span>
+);
+
 class App extends React.Component {
   state = {
     example1: {
@@ -180,10 +188,51 @@ class App extends React.Component {
         },
       ],
     },
+
+    example4: {
+      columns: [
+        {
+          field: 'id',
+          label: 'ID',
+          sort: true,
+          filter: 'like',
+          styles: {
+            width: '80px',
+            textAlign: 'center',
+          },
+        },
+        {
+          field: 'name',
+          label: 'Имя',
+          sort: true,
+          filter: 'like',
+        },
+        {
+          field: 'balance',
+          label: 'Баланс',
+          sort: true,
+          calc: 'avg',
+        },
+        {
+          field: 'gender',
+          label: 'Пол',
+          sort: true,
+          filter: 'dropdown',
+        },
+        {
+          field: 'phone',
+          label: 'Телефон',
+          sort: false,
+          valueComponent: <PhoneField onClick={(value) => alert(value)} />,
+        },
+      ],
+    },
   };
 
   render() {
-    const { example1, example2, example3 } = this.state;
+    const {
+      example1, example2, example3, example4,
+    } = this.state;
     return (
       <div className="App">
         <div className="container">
@@ -236,11 +285,11 @@ class App extends React.Component {
           <div className="card-deck mb-5 text-center">
             <div className="card mb-4 shadow-sm">
               <div className="card-header">
-                <h4 className="my-0 font-weight-normal">Example 4 (grouped doesn`t have pagination and custom caption)</h4>
+                <h4 className="my-0 font-weight-normal">Example 4 (custom value, grouped doesn`t have pagination and custom caption)</h4>
               </div>
               <div className="card-body">
                 <SkifTable
-                  columns={example3.columns}
+                  columns={example4.columns}
                   rows={peoples.slice(0, 20)}
                   groupByField="favoriteFruit"
                   captionComponent={<CaptionComponent />}
